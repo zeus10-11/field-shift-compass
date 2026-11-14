@@ -39,3 +39,4 @@ Thumbs.db
 
 # Data caches (pre-cached NASA JSON — keep if you want them tracked; uncomment to exclude)
 # backend/data/*.json
+api/_data.py
