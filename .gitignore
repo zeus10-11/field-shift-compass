@@ -24,6 +24,9 @@ env/
 ENV/
 .venv/
 
+# Build output
+public/
+
 # OS
 .DS_Store
 Thumbs.db
