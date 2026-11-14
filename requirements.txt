@@ -4,4 +4,3 @@ numpy>=1.26
 requests>=2.31
 scikit-learn>=1.4
 scipy>=1.11
-mangum>=3.5
