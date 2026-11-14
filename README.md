@@ -149,20 +149,4 @@ field-shift-compass/
 | Agronomy/domain researcher | `advice_engine.py` crop KB + agronomist console |
 | Storyteller/pitch lead | `docs/`, demo script, season-plan output |
 
-## 11. Submission checklist (from the official Project Submission Guide)
-
-- [ ] Project page created via **My Team → Project** tab (submission opens Nov 14, 9 a.m., closes Nov 15, 11:59 p.m.)
-- [ ] **Project Name:** Field Shift Compass — Climate Twins for Adapting Farms
-- [ ] **High-Level Project Summary:** see §1–2 above
-- [ ] **Link to Project Demo:** up to 30-second video (script in `docs/demo-video-script.md`) — **do not require password/permission**; host on YouTube/Drive/GitHub with public link; strong demo raises the score
-- [ ] **Detailed Project Description:** what/how/benefits/hopes/tools → §2–3, §9
-- [ ] **Use of SI:** disclosure written → §7
-- [ ] **NASA Data:** POWER + NEX-GDDP-CMIP6 details → §5 (at least one NASA data resource is mandatory for Global Award eligibility)
-- [ ] **Space Agency Data:** §6
-- [ ] Tags: climate, agriculture, food security, machine learning (if applicable), SI usage declared
-- [ ] Images ≤ 10 MB (JPG/PNG/GIF); upload files to a public-accessible cloud service
-- [ ] Save Progress → **Submit for Judging** before local deadline; edits locked after
-
----
-
 *Built for NASA Space Apps Challenge 2026. All trends reproducible from cached NASA POWER responses in `backend/data/`.*
