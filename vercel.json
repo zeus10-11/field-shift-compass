@@ -2,7 +2,7 @@
   "version": 2,
   "framework": null,
   "outputDirectory": "public",
-  "installCommand": "pip install -r requirements.txt",
+  "installCommand": "pip install --break-system-packages -r requirements.txt",
   "buildCommand": "python scripts/build.py",
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.py" },
