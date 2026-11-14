@@ -160,7 +160,7 @@ def meta():
         "data_source": STATE["home_daily"]["source"],
         "record_years": STATE["shifts"]["years"],
         "data_note": "All analytics are computed offline from cached NASA POWER "
-                     "(satellite-assimilated MERRA-2) data; no live API needed "
+        "(MERRA-2 reanalysis) data; no live API needed "
                      "during the demo.",
     }
 
@@ -311,7 +311,7 @@ def season_plan(req: SeasonPlanRequest | None = None):
                  advice_engine.TWIN_PRACTICE.get(top["id"],
                                                  advice_engine.DEFAULT_PRACTICE)},
         "watch_for": _watch_for(),
-        "data_sources": ["NASA POWER (daily, satellite-assimilated)",
+        "data_sources": ["NASA POWER (daily, MERRA-2 reanalysis)",
                          "NEX-GDDP-CMIP6 future deltas (approx.)"],
     }
 
@@ -392,7 +392,7 @@ def boot_payload():
     data on the first frame, even on a slow/absent connection.
     """
     top = STATE["matches"][0] if STATE["matches"] else None
-    return {
+    payload = {
         "meta": {
             "district": STATE["home"],
             "deltas": STATE["deltas"],
@@ -420,6 +420,15 @@ def boot_payload():
         ],
         "climatology": climatology(),
     }
+    # Flatten timeline steps so renderTimeline() in app.js can read
+    # s.top / s.runner / s.temp_add directly on each step (works for both
+    # local dev via python backend/main.py and Vercel via scripts/build.py).
+    for step in payload["timeline"]["steps"]:
+        medium = step["scenarios"][1]  # medium scenario
+        step["top"] = medium["top"]
+        step["runner"] = medium["runner"]
+        step["temp_add"] = medium["temp_add"]
+    return payload
 
 
 @app.get("/")

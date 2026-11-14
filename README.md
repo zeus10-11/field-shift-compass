@@ -1,5 +1,7 @@
 # 🧭 Field Shift Compass
 
+**Live demo:** https://field-shift-compass-9qlh.vercel.app · **Repo:** https://github.com/zeus10-11/field-shift-compass
+
 **A climate twin for every farm.** It shows how the local climate has shifted, finds the place whose *present* looks like your farm's *future*, and tells the farmer what to change — in plain language, with evidence and confidence.
 
 > NASA Space Apps Challenge 2026 · Challenge: **Field Shift: Adapting Farms with NASA Data**
@@ -30,9 +32,9 @@ Climate change is moving the farming calendar: monsoon onset drifts, rain arrive
 
 | Finding (NASA POWER, 2000–2025) | Value |
 |---|---|
-| Monsoon onset (hydrologic definition) | ~**+2.3 days/decade** later (7 Jun 2000 vs 25 Jun 2025 at record extremes) |
+| Monsoon onset (hydrologic definition) | ~**+2.3 days/decade** later (weak, R² ≈ 0.05) (7 Jun 2000 vs 25 Jun 2025 at record extremes) |
 | Sowing-window start | ~**+2.3 days/decade** later (≈ +6 days since 2000) |
-| Monsoon rainfall Jun–Sep | **+143 mm/decade** (r² = 0.29) |
+| Monsoon rainfall Jun–Sep | **+143 mm/decade** (r² = 0.28) |
 | Rain days (≥2.5 mm) | **+8.2 days/decade** (r² = 0.35) — more active days, heavier bursts |
 | Longest mid-season dry spell | −0.5 days/decade (honest: flat) |
 | Heat-stress days (Mar–May) | −2.3 days/decade (honest: declining) |
@@ -42,9 +44,9 @@ The weak trends are shown as weak. Judges see uncertainty, not overclaiming — 
 
 ### Four features most teams won't have
 
-1. **Climate Path timeline** — drag 2026→2040 and watch the twin hold steady (Raipur stays #1 the whole way): the advice is robust, not a one-year fluke.
-2. **Season Risk Calendar** — month-by-month probabilities straight from the 26-year record: June has a 35% chance of an 8+ day dry spell; July carries a 73% chance of ≥50 mm/day bursts; October is 92% dry. This is the "when to worry" strip farmers actually use.
-3. **Farmer-memory back-test (Proof tab)** — the sowing rule replayed over all 26 seasons flags 8 of them (2005, 2006, 2009, 2010, 2017, 2019, 2023, 2025). Judges ask "how do you know it works?" — this answers before they ask.
+- **Climate Path timeline** — drag 2026→2040 and watch the twin hold steady: Raipur stays #1 in the low, medium, and high warming scenarios through 2040 (about 82–90% similarity), so the advice is robust, not a one-year fluke.
+2. **Season Risk Calendar** — month-by-month probabilities straight from the 26-year record: June has a 35% chance of an 8+ day dry spell; July carries a 73% chance of ≥50 mm/day bursts; October has a 92% chance of an 8+ day dry spell. This is the "when to worry" strip farmers actually use.
+3. **Back-test (internal consistency check)** — the sowing rule replayed over all 26 seasons flags 8 of them (2005, 2006, 2009, 2010, 2017, 2019, 2023, 2025). Judges ask "how do you know it works?" — this answers before they ask.
 4. **WhatsApp broadcast preview + one-click copy** — the exact message the extension office sends, evidence included, in the local language.
 
 ## 3. How it works (architecture)
@@ -101,7 +103,7 @@ SI tools (coding assistance) were used to accelerate implementation of this proj
 
 **Validation**
 - Onset definition follows the simplified IMD hydrologic rule (5-day sum ≥ 30 mm followed by ≥ 25 mm in 10 days) — detected onset dates for Vidarbha (early-to-late June) match IMD crop-calendar expectations.
-- Back-test: the sowing rule flags late-onset years (e.g., 2025) — an internal consistency check within the same POWER record; independent verification against district rainfall/yield records is recommended before the "farmers remember" claim is made.
+- Back-test: the sowing rule flags late-onset years (e.g., 2025) — an internal consistency check within the same POWER record; independent verification against district rainfall/yield records is recommended.
 - Trend significance is shown openly (r², strength label); confidence scores degrade honestly.
 
 **Limitations (stated, not hidden)**
@@ -132,7 +134,7 @@ field-shift-compass/
 │   └── js/app.js               charts + interactions (no framework)
 ├── docs/
 │   ├── pitch-deck-outline.md   7-slide deck
-│   └── demo-video-script.md    2-minute demo script
+│   └── demo-video-script.md    30-second demo script
 └── README.md
 ```
 
@@ -152,7 +154,7 @@ field-shift-compass/
 - [ ] Project page created via **My Team → Project** tab (submission opens Nov 14, 9 a.m., closes Nov 15, 11:59 p.m.)
 - [ ] **Project Name:** Field Shift Compass — Climate Twins for Adapting Farms
 - [ ] **High-Level Project Summary:** see §1–2 above
-- [ ] **Link to Project Demo:** 2-minute video (script in `docs/demo-video-script.md`) — **do not require password/permission**; host on YouTube/Drive/GitHub with public link; strong demo raises the score
+- [ ] **Link to Project Demo:** up to 30-second video (script in `docs/demo-video-script.md`) — **do not require password/permission**; host on YouTube/Drive/GitHub with public link; strong demo raises the score
 - [ ] **Detailed Project Description:** what/how/benefits/hopes/tools → §2–3, §9
 - [ ] **Use of SI:** disclosure written → §7
 - [ ] **NASA Data:** POWER + NEX-GDDP-CMIP6 details → §5 (at least one NASA data resource is mandatory for Global Award eligibility)

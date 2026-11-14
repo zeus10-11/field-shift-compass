@@ -79,8 +79,7 @@ def backtest(shifts):
     Flags a year when onset is late (ordinal > mean + 0.75 sigma) or the
     longest dry spell exceeds mean + 0.75 sigma. This is an internal
     consistency check within the same POWER record; an independent check
-    against district rainfall/yield records is recommended before the
-    "farmers remember" claim is made.
+    against district rainfall/yield records is recommended.
     """
     import datetime as _dt
 

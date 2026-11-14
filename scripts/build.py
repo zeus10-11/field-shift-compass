@@ -52,13 +52,14 @@ def main_build():
         "TIMELINE": boot["timeline"],
         # season-plan accepts an optional POST body; precompute the default
         "SEASON_PLAN": main.season_plan(),
-        # feedback is read-only on serverless (no writable disk)
+        # feedback is read-only on serverless (no writable disk); two
+        # sample entries labeled so they are never mistaken for real data
         "FEEDBACK": [
             {
                 "id": 1,
                 "advice_type": "sowing_date",
                 "decision": "follow",
-                "farmer_note": "Waited 8 days more this year - rain came on time. Will do again next year.",
+                "farmer_note": "[Sample entry — demo] Waited 8 days more this year - rain came on time. Will do again next year.",
                 "source": "farmer",
                 "created_at": "2026-06-12T09:30:00",
             },
@@ -66,7 +67,7 @@ def main_build():
                 "id": 2,
                 "advice_type": "sowing_date",
                 "decision": "approved",
-                "farmer_note": "Matches district crop-calendar trial results. Approving for WhatsApp broadcast.",
+                "farmer_note": "[Sample entry — demo] Matches district crop-calendar trial results. Approving for WhatsApp broadcast.",
                 "source": "agronomist",
                 "created_at": "2026-06-13T18:05:00",
             },

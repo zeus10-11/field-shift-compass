@@ -26,13 +26,13 @@
 - Farmer voice notes close the loop (ground truth).
 
 **Slide 5 — NASA data powering it**
-- NASA POWER (satellite-assimilated MERRA-2): daily rainfall, temperature, humidity → all trends.
+- NASA POWER (MERRA-2 reanalysis): daily rainfall, temperature, humidity → all trends.
 - NEX-GDDP-CMIP6: future deltas for the 2040 twin projection.
 - Architecture ready for: GPM IMERG, SMAP soil moisture, MODIS/HLS NDVI, ECOSTRESS, NISAR radar (cloud-proof monsoon monitoring).
 
 **Slide 6 — Validation & honesty**
 - Detected shifts reconciled against IMD crop-calendar/observed behaviour.
-- Back-test: the sowing rule flags the years farmers remember as bad.
+- Back-test: the sowing rule flags difficult seasons as an internal consistency check.
 - Uncertainty shown, never hidden; prototype vs pilot clearly separated.
 
 **Slide 7 — Impact & scale**

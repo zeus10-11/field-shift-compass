@@ -699,7 +699,7 @@ function answerFor(q, ctx) {
     return `Based on your record, a short-duration variety (like MTU-1010, ~115 days) protects you if onset slips again; for flood-prone fields use a submergence-tolerant type (DRR Dhan 44). Your climate twin is ${m.name} — farmers there already use staggered sowing with short-duration types.`;
   }
   if (ql.includes("trust") || ql.includes("why")) {
-    return `Fair question. Every card shows its evidence and a confidence score computed from ${ctx.meta.record_years[0]}–${ctx.meta.record_years.at(-1)} of satellite-assimilated NASA rainfall data — no hidden model. Check the Proof tab: our rule replayed over 26 years flags the difficult seasons. A district agronomist reviews anything I'm unsure about, and farmer feedback each season recalibrates the rules. I'd rather say "Medium" than guess "High".`;
+    return `Fair question. Every card shows its evidence and a confidence score computed from ${ctx.meta.record_years[0]}–${ctx.meta.record_years.at(-1)} of MERRA-2 reanalysis NASA rainfall data — no hidden model. Check the Proof tab: our rule replayed over 26 years flags the difficult seasons. A district agronomist reviews anything I'm unsure about, and farmer feedback each season recalibrates the rules. I'd rather say "Medium" than guess "High".`;
   }
   return `I can answer questions about sowing dates, dry spells, varieties, heat risk and water management — all backed by the district's NASA data record. Try one of the suggested questions. For anything else, send a voice note to your agronomist.`;
 }

@@ -128,7 +128,7 @@ def build_advice(shifts, twin_match, deltas, home, farmer_region_note=None):
             {"text": f"Monsoon onset has arrived ~{abs(total_shift)} days "
                      f"later since {onset['first_year']} "
                      f"({onset_shift:+d} days/decade, R²={onset['r2']}).",
-             "dataset": "NASA POWER daily precipitation (satellite-assimilated)"},
+             "dataset": "NASA POWER daily precipitation (MERRA-2 reanalysis)"},
             {"text": f"Soil-moisture-based sowing window moved "
                      f"{sow_shift:+d} days/decade.",
              "dataset": "NASA POWER daily precipitation"},
