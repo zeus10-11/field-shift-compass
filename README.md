@@ -25,7 +25,7 @@ Climate change is moving the farming calendar: monsoon onset drifts, rain arrive
 - **Shift Advisor** — deterministic, rule-based advice cards, each with **evidence bullets, the dataset they came from, and a transparent confidence score** (trend strength × record length). Nothing is hidden behind a model.
 - **Trust loop** — farmer voice notes/photos/confirmations go to an **Agronomist Console**; approvals become broadcasts, corrections recalibrate the rule thresholds.
 - **Delivery** — WhatsApp-style chat with voice playback (browser speech; recorded local-language notes are a prototype — Hindi voice is safer than Marathi for browser support) and a **printable one-page Season Plan** for farmers without smartphones.
-- **Product-grade dashboard** — sidebar shell, six headline KPI cards, light/dark theme, gradient area + rounded-bar charts, a diverging onset-anomaly chart, map labels with the twin connection drawn, and toast feedback. Deep links (`#twin`, `#proof`) make the demo recording one click per screen.
+- **Product-grade dashboard** — sidebar shell, six headline KPI cards, light/dark theme, gradient area + rounded-bar charts, a diverging onset-anomaly chart, map labels with the twin connection drawn, and toast feedback.
 - **Instant, offline-safe dashboard** — the backend injects all analytics + the India vector outline into the page at serve time (`window.__BOOT__`, and `window.__AGRO_BOOT__` for the console), so both apps paint with data on the first frame with zero fetch round-trips (slow-venue Wi-Fi proof).
 
 ### Demo story (Nagpur district, Vidarbha, Maharashtra — real data)
@@ -40,13 +40,13 @@ Climate change is moving the farming calendar: monsoon onset drifts, rain arrive
 | Heat-stress days (Mar–May) | −2.3 days/decade (honest: declining) |
 | Climate twin for 2040 | **Raipur, Chhattisgarh (closest of 36 districts)** · Rewa (79%) · Lucknow (78%) |
 
-The weak trends are shown as weak. Judges see uncertainty, not overclaiming — that's the trust design principle.
+The weak trends are shown as weak. Uncertainty is shown openly, not hidden — that's the trust design principle.
 
-### Four features most teams won't have
+### Four features
 
-- **Climate Path timeline** — drag 2026→2040 and watch the twin hold steady: Raipur stays #1 in the low, medium, and high warming scenarios through 2040 (about 82–90% similarity), so the advice is robust, not a one-year fluke.
+1. **Climate Path timeline** — drag 2026→2040 and watch the twin hold steady: Raipur stays #1 in the low, medium, and high warming scenarios through 2040 (about 82–90% similarity), so the advice is robust, not a one-year fluke.
 2. **Season Risk Calendar** — month-by-month probabilities straight from the 26-year record: June has a 35% chance of an 8+ day dry spell; July carries a 73% chance of ≥50 mm/day bursts; October has a 92% chance of an 8+ day dry spell. This is the "when to worry" strip farmers actually use.
-3. **Back-test (internal consistency check)** — the sowing rule replayed over all 26 seasons flags 8 of them (2005, 2006, 2009, 2010, 2017, 2019, 2023, 2025). Judges ask "how do you know it works?" — this answers before they ask.
+3. **Back-test (internal consistency check)** — the sowing rule replayed over all 26 seasons flags 8 of them (2005, 2006, 2009, 2010, 2017, 2019, 2023, 2025).
 4. **WhatsApp broadcast preview + one-click copy** — the exact message the extension office sends, evidence included, in the local language.
 
 ## 3. How it works (architecture)
@@ -89,7 +89,7 @@ python backend/main.py
 
 - **NASA POWER** (Prediction Of Worldwide Energy Resources), AG community — daily meteorology 2000–2025 for the home district (parameters `PRECTOTCORR`, `T2M`, `T2M_MAX`, `T2M_MIN`, `RH2M`, `WS2M`, `ALLSKY_SFC_SW_DWN`) and 22-year monthly climatology for 37 Indian districts. POWER data is MERRA-2 reanalysis, which assimilates satellite observations; rainfall is corrected with gauge/satellite-blended products. This is the dataset for **every trend, twin feature and advice trigger** in the app.
 - **NEX-GDDP-CMIP6** (NASA Earth Exchange Global Daily Downscaled Projections) — scenario-informed CMIP6 ensemble-median deltas for ~2040 under SSP2-4.5 (temperature +1.1 °C, annual rainfall ×1.08 with monsoon ×1.05, onset shift +6 days) define the home farm's *projected future* in the twin match. These deltas are applied uniformly and are approximate — not pulled from actual NEX-GDDP grid-cell files in this prototype. A pilot would run the actual NEX-GDDP-CMIP6 files per grid cell.
-- **Pipeline-ready (not yet wired into the live demo):** GPM IMERG (onset), SMAP (root-zone soil moisture), MODIS/HLS NDVI (green-up), ECOSTRESS (plant water stress), NISAR (cloud-proof radar monitoring of monsoon fields). The `data_fetch.py` module is structured so each is a drop-in cached layer.
+- **Pipeline-ready:** GPM IMERG (onset), SMAP (root-zone soil moisture), MODIS/HLS NDVI (green-up), ECOSTRESS (plant water stress), NISAR (cloud-proof radar monitoring of monsoon fields). The `data_fetch.py` module is structured so each is a drop-in cached layer.
 
 ## 6. Space agency & partner data
 
@@ -99,7 +99,7 @@ No partner-agency datasets were required for the prototype. Architecture accommo
 
 SI tools (coding assistance) were used to accelerate implementation of this project, in accordance with the Space Apps 2026 rules. SI was used for: code generation/refactoring of the FastAPI backend, web UI code, and this documentation's drafts. SI was **not** used to fabricate data: every displayed number is computed from cached NASA POWER/CMIP6-derived values by the deterministic analytics modules in `backend/analytics/`, and can be reproduced from the raw cached API responses. No SI-generated images, audio, or branding elements appear in the project. Any AI-phrased text would carry a visible watermark; the rule-based advice engine and all charts are deterministic outputs.
 
-## 8. Validation & limitations (say it before the judges do)
+## 8. Validation & limitations
 
 **Validation**
 - Onset definition follows the simplified IMD hydrologic rule (5-day sum ≥ 30 mm followed by ≥ 25 mm in 10 days) — detected onset dates for Vidarbha (early-to-late June) match IMD crop-calendar expectations.
@@ -137,16 +137,5 @@ field-shift-compass/
 │   └── demo-video-script.md    30-second demo script
 └── README.md
 ```
-
-## 10. Team roles mapping
-
-| Role | Where it lives in the repo |
-|---|---|
-| Data/GIS engineer | `data_fetch.py`, `backend/data/` |
-| Climate/analytics lead | `analytics/shift_detector.py`, `twin_matcher.py` |
-| Full-stack developer | `main.py`, `web/js/app.js` |
-| UX/UI designer | `web/css/style.css`, advice cards, chat flow |
-| Agronomy/domain researcher | `advice_engine.py` crop KB + agronomist console |
-| Storyteller/pitch lead | `docs/`, demo script, season-plan output |
 
 *Built for NASA Space Apps Challenge 2026. All trends reproducible from cached NASA POWER responses in `backend/data/`.*
