@@ -30,6 +30,15 @@ def main_build():
 
     boot = main.boot_payload()
 
+    # --- Flatten timeline steps: app.js renderTimeline() reads s.top,
+    # s.runner, s.temp_add directly on each step, but boot_payload nests
+    # them inside scenarios[]. Pull the medium scenario up to step level.
+    for step in boot["timeline"]["steps"]:
+        medium = step["scenarios"][1]  # medium scenario
+        step["temp_add"] = medium["temp_add"]
+        step["top"] = medium["top"]
+        step["runner"] = medium["runner"]
+
     # --- Precompute all API responses ---
     data = {
         "META": boot["meta"],
