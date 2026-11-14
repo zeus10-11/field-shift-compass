@@ -95,6 +95,11 @@ def match(home_vec, candidates, top_k=3):
 
     candidates: list of dicts with keys id/name/climatology(features dict).
     Returns ranked matches with per-feature deltas explained.
+
+    NOTE: similarity is relative within the candidate pool, not an absolute
+    score. sim = 1 - dist/dist_max where dist_max is the farthest candidate.
+    So "87% match" means "closest of the 36 candidate districts" — it does
+    not mean 87% climate agreement in absolute terms. Present it as such.
     """
     ids = [c["id"] for c in candidates]
     X = np.array([list(c["features"].values()) for c in candidates], dtype=float)

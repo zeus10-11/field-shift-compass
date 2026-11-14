@@ -2,6 +2,9 @@
 
 Run:  python -m scripts.fetch_data        (from the project root)
 or:   python data_fetch.py               (from backend/)
+
+POWER data is MERRA-2 reanalysis, which assimilates satellite observations.
+Rainfall is corrected with gauge/satellite-blended products.
 """
 
 import json
@@ -90,7 +93,7 @@ def main():
         "lat": home["lat"],
         "lon": home["lon"],
         "years": [y0, y1],
-        "source": "NASA POWER daily (AG community, MERRA-2 assimilation)",
+        "source": "NASA POWER daily (AG community, MERRA-2 reanalysis)",
         "parameters": daily,
     })
 
@@ -99,7 +102,7 @@ def main():
         "district": home["id"],
         "lat": home["lat"],
         "lon": home["lon"],
-        "source": "NASA POWER climatology (22-year monthly means)",
+        "source": "NASA POWER climatology (22-year monthly means, MERRA-2 reanalysis)",
         "parameters": fetch_climatology(home["lat"], home["lon"],
                                         config.CLIMATOLOGY_PARAMS),
     })
@@ -113,7 +116,7 @@ def main():
                 "name": c["name"],
                 "lat": c["lat"],
                 "lon": c["lon"],
-                "source": "NASA POWER climatology (22-year monthly means)",
+                "source": "NASA POWER climatology (22-year monthly means, MERRA-2 reanalysis)",
                 "parameters": fetch_climatology(c["lat"], c["lon"],
                                                 config.CLIMATOLOGY_PARAMS),
             })

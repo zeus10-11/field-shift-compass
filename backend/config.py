@@ -21,7 +21,7 @@ HOME_DISTRICT = {
     "lon": 79.09,
     "sowing_month": 6,          # June = kharif sowing
     "harvest_month": 11,        # November
-    "language": "Marathi / Hindi / English",
+    "language": "Hindi / English (Marathi voice support is unreliable in browsers)",
 }
 
 # Candidate districts used by the Climate Twin Matcher. Coordinates are
@@ -67,12 +67,14 @@ TWIN_CANDIDATES = [
 
 # ---------------------------------------------------------------------------
 # Future-climate deltas for the home district around 2040 under SSP2-4.5,
-# expressed as median changes from the NEX-GDDP-CMIP6 ensemble for
-# peninsular India (approximate, documented in the README).
+# expressed as scenario-informed deltas applied uniformly to the home
+# climatology. These are approximate CMIP6 ensemble-median deltas for
+# peninsular India — NOT pulled from actual NEX-GDDP grid-cell files in this
+# prototype. A pilot would run the actual NEX-GDDP-CMIP6 files per grid cell.
 # ---------------------------------------------------------------------------
 FUTURE_DELTAS_2040 = {
     "target_year": 2040,
-    "scenario": "SSP2-4.5 (NEX-GDDP-CMIP6 ensemble median, approximate)",
+    "scenario": "SSP2-4.5 (scenario-informed CMIP6 ensemble-median deltas, approximate)",
     "temp_add_c": 1.1,          # added to every month's mean/max/min temperature
     "rain_mult_annual": 1.08,   # annual precipitation multiplier
     "rain_mult_monsoon": 1.05,  # Jun-Sep precipitation multiplier

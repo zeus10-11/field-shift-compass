@@ -19,10 +19,10 @@ Climate change is moving the farming calendar: monsoon onset drifts, rain arrive
 ## 2. What it does
 
 - **Shift Detector** — 25+ years of daily NASA POWER data → monsoon onset dates, sowing-window start, mid-season dry spells, heat-stress days, monsoon totals, heavy-rain days, rain-day counts — each with an honest trend line and strength rating.
-- **Climate Twin Matcher** — builds the farm's *projected 2040 climate* (documented NEX-GDDP-CMIP6 ensemble deltas applied to observed climatology) and nearest-neighbour matches it against 36 regions' *current* NASA climatology. The output is a concrete answer: *"Your 2040 climate is an 87% match to Raipur, Chhattisgarh today — here's what farmers there grow."*
+- **Climate Twin Matcher** — builds the farm's *projected 2040 climate* (scenario-informed CMIP6 deltas applied to observed climatology) and nearest-neighbour matches it against 36 regions' *current* NASA climatology. The output is a concrete answer: *"Your 2040 climate is closest to Raipur, Chhattisgarh today (among 36 candidate districts) — here's what farmers there grow."* The match percentage is relative within the candidate pool, not an absolute score.
 - **Shift Advisor** — deterministic, rule-based advice cards, each with **evidence bullets, the dataset they came from, and a transparent confidence score** (trend strength × record length). Nothing is hidden behind a model.
 - **Trust loop** — farmer voice notes/photos/confirmations go to an **Agronomist Console**; approvals become broadcasts, corrections recalibrate the rule thresholds.
-- **Delivery** — WhatsApp-style chat with voice playback (browser speech; the pilot uses recorded local-language notes) and a **printable one-page Season Plan** for farmers without smartphones.
+- **Delivery** — WhatsApp-style chat with voice playback (browser speech; recorded local-language notes are a prototype — Hindi voice is safer than Marathi for browser support) and a **printable one-page Season Plan** for farmers without smartphones.
 - **Product-grade dashboard** — sidebar shell, six headline KPI cards, light/dark theme, gradient area + rounded-bar charts, a diverging onset-anomaly chart, map labels with the twin connection drawn, and toast feedback. Deep links (`#twin`, `#proof`) make the demo recording one click per screen.
 - **Instant, offline-safe dashboard** — the backend injects all analytics + the India vector outline into the page at serve time (`window.__BOOT__`, and `window.__AGRO_BOOT__` for the console), so both apps paint with data on the first frame with zero fetch round-trips (slow-venue Wi-Fi proof).
 
@@ -36,7 +36,7 @@ Climate change is moving the farming calendar: monsoon onset drifts, rain arrive
 | Rain days (≥2.5 mm) | **+8.2 days/decade** (r² = 0.35) — more active days, heavier bursts |
 | Longest mid-season dry spell | −0.5 days/decade (honest: flat) |
 | Heat-stress days (Mar–May) | −2.3 days/decade (honest: declining) |
-| Climate twin for 2040 | **Raipur, Chhattisgarh (~87%)** · Rewa (79%) · Lucknow (78%) |
+| Climate twin for 2040 | **Raipur, Chhattisgarh (closest of 36 districts)** · Rewa (79%) · Lucknow (78%) |
 
 The weak trends are shown as weak. Judges see uncertainty, not overclaiming — that's the trust design principle.
 
@@ -85,8 +85,8 @@ python backend/main.py
 
 ## 5. NASA data used (submission field answer)
 
-- **NASA POWER** (Prediction Of Worldwide Energy Resources), AG community — daily meteorology 2000–2025 for the home district (parameters `PRECTOTCORR`, `T2M`, `T2M_MAX`, `T2M_MIN`, `RH2M`, `WS2M`, `ALLSKY_SFC_SW_DWN`) and 22-year monthly climatology for 37 Indian districts. POWER's MERRA-2 assimilation incorporates NASA satellite observations (GPM, MODIS and others). This is the dataset for **every trend, twin feature and advice trigger** in the app.
-- **NEX-GDDP-CMIP6** (NASA Earth Exchange Global Daily Downscaled Projections) — ensemble-median deltas for ~2040 under SSP2-4.5 (temperature +1.1 °C, annual rainfall ×1.08 with monsoon ×1.05, onset shift +6 days) define the home farm's *projected future* in the twin match. Documented, approximate, and cited in-app as such.
+- **NASA POWER** (Prediction Of Worldwide Energy Resources), AG community — daily meteorology 2000–2025 for the home district (parameters `PRECTOTCORR`, `T2M`, `T2M_MAX`, `T2M_MIN`, `RH2M`, `WS2M`, `ALLSKY_SFC_SW_DWN`) and 22-year monthly climatology for 37 Indian districts. POWER data is MERRA-2 reanalysis, which assimilates satellite observations; rainfall is corrected with gauge/satellite-blended products. This is the dataset for **every trend, twin feature and advice trigger** in the app.
+- **NEX-GDDP-CMIP6** (NASA Earth Exchange Global Daily Downscaled Projections) — scenario-informed CMIP6 ensemble-median deltas for ~2040 under SSP2-4.5 (temperature +1.1 °C, annual rainfall ×1.08 with monsoon ×1.05, onset shift +6 days) define the home farm's *projected future* in the twin match. These deltas are applied uniformly and are approximate — not pulled from actual NEX-GDDP grid-cell files in this prototype. A pilot would run the actual NEX-GDDP-CMIP6 files per grid cell.
 - **Pipeline-ready (not yet wired into the live demo):** GPM IMERG (onset), SMAP (root-zone soil moisture), MODIS/HLS NDVI (green-up), ECOSTRESS (plant water stress), NISAR (cloud-proof radar monitoring of monsoon fields). The `data_fetch.py` module is structured so each is a drop-in cached layer.
 
 ## 6. Space agency & partner data
@@ -101,12 +101,12 @@ SI tools (coding assistance) were used to accelerate implementation of this proj
 
 **Validation**
 - Onset definition follows the simplified IMD hydrologic rule (5-day sum ≥ 30 mm followed by ≥ 25 mm in 10 days) — detected onset dates for Vidarbha (early-to-late June) match IMD crop-calendar expectations.
-- Back-test: the sowing rule flags the late-onset years (e.g., 2025) that farmers in the district remember as bad sowing years.
+- Back-test: the sowing rule flags late-onset years (e.g., 2025) — an internal consistency check within the same POWER record; independent verification against district rainfall/yield records is recommended before the "farmers remember" claim is made.
 - Trend significance is shown openly (r², strength label); confidence scores degrade honestly.
 
 **Limitations (stated, not hidden)**
 - POWER point data ≈ district headquarters, not field-level; a pilot would add district polygons and farmer-submitted ground truth.
-- Future deltas are ensemble-medians applied uniformly; a pilot would run the actual NEX-GDDP-CMIP6 files per grid cell.
+- Future deltas are scenario-informed CMIP6 ensemble-median deltas applied uniformly; a pilot would run the actual NEX-GDDP-CMIP6 files per grid cell.
 - Crop knowledge base is curated for Indian kharif systems and meant for agronomist review — it is a starting point, not a final authority.
 - Demo region: Vidarbha; the pipeline is region-agnostic (`backend/config.py`).
 

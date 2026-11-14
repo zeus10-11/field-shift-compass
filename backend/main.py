@@ -86,16 +86,42 @@ def load_state():
     advice = advice_engine.build_advice(shifts, matches, deltas, home)
 
     # Climate Path: which region is your twin along the 2026 -> 2040 path?
+    # Run across low / medium / high delta ranges so the twin match is not
+    # true by construction under a single linear scenario.
     path_steps = [("2026", 0.0), ("2029", 0.25), ("2032", 0.5),
                   ("2036", 0.75), ("2040", 1.0)]
+    scenario_multipliers = {
+        "low":    {"temp_add_c": deltas["temp_add_c"] * 0.5,
+                   "rain_mult_annual": 1 + (deltas["rain_mult_annual"] - 1) * 0.5,
+                   "rain_mult_monsoon": 1 + (deltas["rain_mult_monsoon"] - 1) * 0.5,
+                   "onset_shift_days": deltas["onset_shift_days"] * 0.5,
+                   "rh_add_pct": deltas["rh_add_pct"] * 0.5},
+        "medium": {"temp_add_c": deltas["temp_add_c"],
+                   "rain_mult_annual": deltas["rain_mult_annual"],
+                   "rain_mult_monsoon": deltas["rain_mult_monsoon"],
+                   "onset_shift_days": deltas["onset_shift_days"],
+                   "rh_add_pct": deltas["rh_add_pct"]},
+        "high":   {"temp_add_c": deltas["temp_add_c"] * 1.5,
+                   "rain_mult_annual": 1 + (deltas["rain_mult_annual"] - 1) * 1.5,
+                   "rain_mult_monsoon": 1 + (deltas["rain_mult_monsoon"] - 1) * 1.5,
+                   "onset_shift_days": deltas["onset_shift_days"] * 1.5,
+                   "rh_add_pct": deltas["rh_add_pct"] * 1.5},
+    }
     timeline = []
     for year_label, frac in path_steps:
-        fc_i = twin_matcher.scale_features(deltas, home_clim["parameters"], frac=frac)
-        feats_i = twin_matcher.features_from_climatology(fc_i)
-        ms_i, _ = twin_matcher.match(feats_i, candidates, top_k=2)
+        step_scenarios = []
+        for scen_name, scen in scenario_multipliers.items():
+            fc_i = twin_matcher.scale_features(scen, home_clim["parameters"], frac=frac)
+            feats_i = twin_matcher.features_from_climatology(fc_i)
+            ms_i, _ = twin_matcher.match(feats_i, candidates, top_k=2)
+            step_scenarios.append({
+                "scenario": scen_name,
+                "top": ms_i[0],
+                "runner": ms_i[1],
+                "temp_add": round(scen["temp_add_c"] * frac, 2),
+            })
         timeline.append({"year": year_label, "frac": frac,
-                         "top": ms_i[0], "runner": ms_i[1],
-                         "temp_add": round(deltas["temp_add_c"] * frac, 2)})
+                         "scenarios": step_scenarios})
 
     STATE.update({
         "home": home,

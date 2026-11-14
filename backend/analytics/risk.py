@@ -74,10 +74,13 @@ def risk_calendar(daily_params):
 
 
 def backtest(shifts):
-    """Would the sowing rule have flagged the years farmers remember?
+    """Would the sowing rule have flagged late-onset years?
 
-    Flag a year when onset is late (ordinal > mean + 0.75 sigma) or the
-    longest dry spell exceeds mean + 0.75 sigma.
+    Flags a year when onset is late (ordinal > mean + 0.75 sigma) or the
+    longest dry spell exceeds mean + 0.75 sigma. This is an internal
+    consistency check within the same POWER record; an independent check
+    against district rainfall/yield records is recommended before the
+    "farmers remember" claim is made.
     """
     import datetime as _dt
 
@@ -121,6 +124,6 @@ def backtest(shifts):
         "dry_sd": round(d_sd, 1),
         "flagged_years": flagged,
         "n_years": len(years),
-        "summary": f"{len(flagged)} of {len(years)} seasons would have been "
-                   f"flagged for a sowing-date or dry-spell check.",
+        "summary": f"{len(flagged)} of {len(years)} seasons flagged for "
+                   f"late onset or long dry spell (internal consistency check).",
     }
