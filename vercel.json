@@ -1,8 +1,0 @@
-{
-  "version": 2,
-  "framework": null,
-  "buildCommand": "pip install -r requirements.txt",
-  "devCommand": "uvicorn backend.main:app --host 0.0.0.0 --port $PORT",
-  "installCommand": "pip install -r requirements.txt",
-  "crons": []
-}
