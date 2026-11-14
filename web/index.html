@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Shift Compass — NASA Space Apps 2026</title>
+<link rel="stylesheet" href="/web/css/style.css">
+<link rel="stylesheet" href="/web/vendor/leaflet.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="side-brand">
+      <div class="logo">🧭</div>
+      <div>
+        <h1>Field Shift<br>Compass</h1>
+        <p class="sub">NASA Space Apps 2026</p>
+      </div>
+    </div>
+
+    <div class="side-nav-label">Dashboard</div>
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="home"><span class="ico">🏡</span><span>My Field</span><span class="arrow">›</span></button>
+      <button class="tab" data-tab="shifts"><span class="ico">📊</span><span>What Changed</span><span class="arrow">›</span></button>
+      <button class="tab" data-tab="twin"><span class="ico">🗺</span><span>Climate Twin</span><span class="arrow">›</span></button>
+      <button class="tab" data-tab="advice"><span class="ico">✅</span><span>What To Do</span><span class="arrow">›</span></button>
+      <button class="tab" data-tab="backtest"><span class="ico">🧪</span><span>Proof</span><span class="arrow">›</span></button>
+      <button class="tab" data-tab="chat"><span class="ico">💬</span><span>Field Chat</span><span class="arrow">›</span></button>
+      <button class="tab" data-tab="plan"><span class="ico">🖨</span><span>Season Plan</span><span class="arrow">›</span></button>
+    </nav>
+
+    <div class="side-nav-label">For the trust layer</div>
+    <a class="tab expert" href="/agronomist" target="_blank">
+      <span class="ico">👩‍🌾</span><span>Expert View</span><span class="arrow">↗</span>
+    </a>
+
+    <div class="side-footer">
+      <div class="side-badge"><span class="pulse"></span> Live · cached NASA data</div>
+      <button class="theme-toggle" id="theme-toggle" title="Switch theme">🌙 Dark mode</button>
+      <div class="side-credit">NASA POWER · NEX-GDDP-CMIP6<br>Built for Space Apps 2026</div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main-wrap">
+    <header class="mobile-bar">
+      <button id="menu-toggle" class="menu-btn">☰</button>
+      <div class="mobile-brand">🧭 Field Shift Compass</div>
+      <button class="theme-toggle small" id="theme-toggle-mobile">🌙</button>
+    </header>
+
+    <main>
+      <!-- ================= HOME ================= -->
+      <section class="view active" id="view-home">
+        <div class="page-head">
+          <div>
+            <div class="page-kicker">Overview</div>
+            <h2>Your field this season</h2>
+            <p class="hint">What the last 26 years of NASA data say about your farm —
+              and where your climate is heading.</p>
+          </div>
+          <div class="page-actions">
+            <span class="pill light" id="district-pill">Loading…</span>
+          </div>
+        </div>
+
+        <div class="hero card">
+          <div class="hero-text">
+            <div class="hero-kicker" id="hero-kicker">Loading your district…</div>
+            <div class="hero-headline" id="hero-headline"></div>
+            <div class="hero-sub" id="hero-sub"></div>
+            <div class="hero-cta">
+              <button class="btn-primary" onclick="activateTab('advice')">See what to do this season →</button>
+              <button class="btn-ghost-light" onclick="activateTab('twin')">Find my climate twin</button>
+            </div>
+          </div>
+          <div class="hero-stats" id="hero-stats"></div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card map-card">
+            <div class="card-head">
+              <h3>Where your future climate already lives</h3>
+              <span class="tag">offline-safe vector map</span>
+            </div>
+            <div id="map"></div>
+            <div class="map-legend">
+              <span><span class="dot home"></span> Your field</span>
+              <span><span class="dot twin"></span> Climate twin</span>
+              <span><span class="dot cand"></span> Runner-up twins</span>
+            </div>
+          </div>
+          <div class="card" id="summary-card">
+            <div class="card-head">
+              <h3 id="district-name">Loading…</h3>
+            </div>
+            <p class="crop" id="district-crop"></p>
+            <div id="headline-shifts" class="headline-shifts"></div>
+            <div class="data-note" id="data-note"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SHIFTS ================= -->
+      <section class="view" id="view-shifts">
+        <div class="page-head">
+          <div>
+            <div class="page-kicker">Layer 1 · Shift Detector</div>
+            <h2>What changed here since 2000</h2>
+            <p class="hint">Computed from cached NASA POWER daily data (satellite-assimilated).
+              Line = fitted trend; dots = each season.</p>
+          </div>
+        </div>
+
+        <div class="kpi-row" id="shift-kpis"></div>
+
+        <div class="card risk-card">
+          <div class="card-head">
+            <h3>Season Risk Calendar</h3>
+            <span class="tag">probability from 26 years of daily data</span>
+          </div>
+          <div class="risk-strip" id="risk-strip"></div>
+          <div class="risk-legend">
+            <span><span class="risk-swatch s-dry"></span> ≥8-day dry spell inside the month</span>
+            <span><span class="risk-swatch s-heavy"></span> ≥1 day of ≥50 mm rain</span>
+            <span><span class="risk-swatch s-heat"></span> typical max temperature</span>
+          </div>
+        </div>
+
+        <div class="grid-2" id="shift-charts"></div>
+      </section>
+
+      <!-- ================= TWIN ================= -->
+      <section class="view" id="view-twin">
+        <div class="page-head">
+          <div>
+            <div class="page-kicker">Layer 2 · Climate Twin</div>
+            <h2>Your climate twin</h2>
+            <p class="hint">We matched your farm's <b>projected future climate</b> against
+              the climate of <span id="cand-count"></span> regions today.</p>
+          </div>
+        </div>
+
+        <div class="card twin-card" id="twin-card"></div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Climate Path</h3>
+              <span class="tag">drag the slider</span>
+            </div>
+            <p class="hint">From today to 2040 along the warming path — watch your
+              twin hold steady (or shift) as your climate moves.</p>
+            <input type="range" id="path-slider" min="0" max="4" step="1" value="0">
+            <div class="path-ticks" id="path-ticks"></div>
+            <div class="path-result" id="path-result"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Same months, two places</h3>
+            </div>
+            <div class="chart" id="chart-clim-compare"></div>
+            <div class="legend-row" id="clim-legend"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Twin Explorer</h3>
+            <span class="tag">inspect any of the compared regions</span>
+          </div>
+          <div class="grid-2 explorer-grid">
+            <div>
+              <select id="explorer-select" class="select"></select>
+              <div id="explorer-profile"></div>
+            </div>
+            <div>
+              <h4 class="mini-head">Who matches your 2040 best?</h4>
+              <div id="explorer-ranking"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ADVICE ================= -->
+      <section class="view" id="view-advice">
+        <div class="page-head">
+          <div>
+            <div class="page-kicker">Layer 3 · Shift Advisor</div>
+            <h2>What you can do this season</h2>
+            <p class="hint">Rule-based, evidence-first. Confidence comes from trend
+              strength and record length — nothing hidden.</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div id="advice-cards"></div>
+          <div>
+            <div class="card wa-card">
+              <div class="card-head">
+                <h3>📱 WhatsApp broadcast preview</h3>
+              </div>
+              <p class="hint">What the extension office sends to farmer groups —
+                one message, local language, no links.</p>
+              <div class="wa-preview" id="wa-preview"></div>
+              <button class="btn-secondary" id="btn-share">🔗 Copy broadcast text</button>
+            </div>
+            <div class="feedback-strip">
+              <b>Not sure?</b> Send a voice note or photo from Field Chat — a local
+              agronomist reviews it and replies in your language.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= BACKTEST ================= -->
+      <section class="view" id="view-backtest">
+        <div class="page-head">
+          <div>
+            <div class="page-kicker">Validation</div>
+            <h2>Proof: would it have warned you?</h2>
+            <p class="hint">The trust test — replay our rule over 26 years and see
+              whether it flags the seasons farmers remember as difficult.</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><h3>Season-by-season</h3><span class="tag" id="bt-count"></span></div>
+            <div id="backtest-summary" class="backtest-summary"></div>
+            <div class="table-scroll">
+              <table class="feature-table" id="backtest-table"></table>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-head"><h3>How the flag works</h3></div>
+              <div class="cal-box" id="backtest-how"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>Onset anomaly by season</h3>
+                <span class="tag">days vs 26-year mean</span>
+              </div>
+              <div class="chart" id="bt-chart"></div>
+              <div class="legend-row">
+                <span><span class="chip" style="background:#d3952f"></span>late onset</span>
+                <span><span class="chip" style="background:#46a06a"></span>early onset</span>
+                <span><span class="chip" style="background:#c64a34"></span>0.75σ threshold</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Why this matters</h3></div>
+              <p class="hint" style="margin-bottom:0">Farmers trust a tool that admits
+                what it doesn't know and gets tested against memory, not vibes.
+                Flagged seasons go to the agronomist console for confirmation —
+                the feedback loop recalibrates thresholds each season.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= CHAT ================= -->
+      <section class="view" id="view-chat">
+        <div class="page-head">
+          <div>
+            <div class="page-kicker">Delivery</div>
+            <h2>Field Chat</h2>
+            <p class="hint">The same advice, delivered the way farmers actually
+              listen — a conversation, with voice.</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card chat-card">
+            <div class="chat-header">
+              <div class="avatar">🌾</div>
+              <div class="chat-title"><b>Field Shift Compass</b><br><small>advisory · evidence-based</small></div>
+              <span class="online-dot"></span>
+            </div>
+            <div class="chat-body" id="chat-body"></div>
+            <div class="chat-input">
+              <button id="btn-voice" title="Play advice as voice">🔊</button>
+              <button id="btn-mic" title="Send a voice note back">🎙</button>
+              <input id="chat-text" placeholder="Type a question…">
+              <button id="btn-send" title="Send">➤</button>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-head"><h3>Try asking</h3></div>
+              <ul class="ask-list">
+                <li data-q="When should I sow this year?">“When should I sow this year?”</li>
+                <li data-q="Will my crop get enough water?">“Will my crop get enough water?”</li>
+                <li data-q="Which variety should I use?">“Which variety should I use?”</li>
+                <li data-q="Why should I trust this?">“Why should I trust this?”</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Voice note to agronomist</h3></div>
+              <p class="hint">Voice notes and photos go to the district agronomist's
+                review queue. Approved advice becomes the next broadcast;
+                corrections recalibrate the rules.</p>
+              <button class="btn-secondary" onclick="window.open('/agronomist','_blank')">Open Expert View →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PLAN ================= -->
+      <section class="view" id="view-plan">
+        <div class="page-head">
+          <div>
+            <div class="page-kicker">Offline delivery</div>
+            <h2>Printable Season Plan</h2>
+            <p class="hint">For farmers without smartphones — one page, local language,
+              take it to the field.</p>
+          </div>
+        </div>
+        <div class="card plan-card">
+          <div id="season-plan"></div>
+          <button class="btn-primary" onclick="window.print()">🖨 Print / Save as PDF</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span><b>NASA POWER</b> daily (satellite-assimilated MERRA-2) · future path
+      <b>NEX-GDDP-CMIP6</b> (approx. ensemble medians) · pipeline ready for GPM IMERG,
+      SMAP, MODIS/HLS NDVI &amp; NISAR</span>
+      <span>NASA Space Apps Challenge 2026 · “Field Shift: Adapting Farms with NASA Data”</span>
+    </footer>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/web/vendor/leaflet.js"></script>
+<script src="/web/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Shift Compass — Agronomist Console</title>
+<link rel="stylesheet" href="/web/css/style.css">
+<style>
+  .queue-item { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; background: #fff; }
+  .queue-item .head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .badge { font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px; }
+  .badge.farmer { background: var(--amber-soft); color: var(--amber); }
+  .badge.agronomist { background: var(--green-soft); color: var(--green); }
+  .badge.follow { background: var(--green-soft); color: var(--green); }
+  .badge.modify, .badge.question { background: var(--amber-soft); color: var(--amber); }
+  .badge.reject { background: var(--red-soft); color: var(--red); }
+  .badge.approved { background: var(--green-soft); color: var(--green); }
+  .queue-item .note { font-size: 13.5px; margin: 8px 0; color: #40513c; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .actions button { border: none; border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn-ok { background: var(--green); color: #fff; }
+  .btn-edit { background: #e9e6dc; color: var(--ink); }
+  .cal-box { background: var(--teal-soft); border-radius: 12px; padding: 14px 16px; font-size: 14px; line-height: 1.6; }
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+  .stat { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px; text-align: center; }
+  .stat b { font-size: 24px; display: block; }
+  .stat span { color: var(--muted); font-size: 12.5px; }
+  @media (max-width: 800px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">👩‍🌾</div>
+    <div>
+      <h1>Agronomist Console — Field Shift Compass</h1>
+      <p class="sub">Review · approve · correct · recalibrate</p>
+    </div>
+  </div>
+  <nav class="tabs">
+    <a class="tab" href="/">← Back to farmer app</a>
+  </nav>
+</header>
+
+<main>
+  <div class="stat-row" id="stats"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>This season's advice (what farmers received)</h3>
+      <div id="advice-list"></div>
+    </div>
+    <div class="card">
+      <h3>Farmer feedback queue</h3>
+      <p class="hint">Voice notes, photos and follow-up decisions arrive here.
+        Approving advice adds it to the next broadcast; corrections are used to
+        recalibrate the rule thresholds for this district.</p>
+      <div id="feedback-list"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Season Risk Calendar <span class="chip-note">from 26 years of daily NASA POWER data</span></h3>
+    <div class="risk-strip" id="risk-strip"></div>
+  </div>
+
+  <div class="card">
+    <h3>Recalibration status</h3>
+    <div class="cal-box" id="cal-box"></div>
+  </div>
+</main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const api = (p) => fetch(p).then((r) => r.json());
+
+function renderStats(fbs) {
+  const follows = fbs.filter((f) => f.decision === "follow").length;
+  const qs = fbs.filter((f) => ["question", "modify", "reject"].includes(f.decision)).length;
+  const pending = qs;
+  $("#stats").innerHTML = `
+    <div class="stat"><b>${fbs.length}</b><span>feedback items this season</span></div>
+    <div class="stat"><b>${follows}</b><span>farmers following advice</span></div>
+    <div class="stat"><b>${qs}</b><span>questions / corrections</span></div>
+    <div class="stat"><b>${pending}</b><span>items awaiting review</span></div>`;
+}
+
+function renderAdvice(advice) {
+  $("#advice-list").innerHTML = advice.cards.map((c, i) => `
+    <div class="queue-item">
+      <div class="head"><b>#${i + 1} ${c.action_type.replace(/_/g, " ")}</b>
+        <span class="badge ${c.confidence[1].toLowerCase().replace("-", "")}">${c.confidence[1]} · ${Math.round(c.confidence[0] * 100)}%</span></div>
+      <div class="note">${c.recommendation}</div>
+      ${c.twin_reference ? `<div class="note" style="color:#147d7b">🧭 ${c.twin_reference}</div>` : ""}
+      <div class="actions">
+        <button class="btn-ok" onclick="act('${c.action_type}','approved','Approved by agronomist')">✓ Approve for broadcast</button>
+        <button class="btn-edit" onclick="act('${c.action_type}','modify','Edited before broadcast (agronomist)')">✎ Edit</button>
+      </div>
+    </div>`).join("");
+}
+
+async function act(type, decision, note) {
+  await fetch("/api/feedback", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ advice_type: type, decision, farmer_note: note, source: "agronomist" }),
+  });
+  boot();
+}
+
+function renderFeedback(fbs) {
+  $("#feedback-list").innerHTML = fbs.slice().reverse().map((f) => `
+    <div class="queue-item">
+      <div class="head">
+        <b>${f.advice_type.replace(/_/g, " ")}</b>
+        <span><span class="badge ${f.source}">${f.source}</span>
+              <span class="badge ${f.decision}">${f.decision}</span></span>
+      </div>
+      <div class="note">"${f.farmer_note}"</div>
+      <div class="note" style="font-size:11.5px; color:#6b7263">${f.created_at}</div>
+      ${["question", "modify", "reject"].includes(f.decision) && f.source === "farmer" ? `
+        <div class="actions">
+          <button class="btn-ok" onclick="act('${f.advice_type}','approved','Reviewed: farmer concern addressed, advice stands')">✓ Reviewed — advice stands</button>
+          <button class="btn-edit" onclick="act('${f.advice_type}','modify','Recalibrating thresholds based on farmer report')">⚙ Recalibrate rules</button>
+        </div>` : ""}
+    </div>`).join("");
+}
+
+function renderCalibration(fbs, bt) {
+  const corrections = fbs.filter((f) => f.decision === "modify" || f.decision === "reject").length;
+  const follows = fbs.filter((f) => f.decision === "follow").length;
+  $("#cal-box").innerHTML = `
+    <b>How the feedback loop improves the system:</b><br>
+    • ${follows} farmer confirmations used as ground-truth checks against satellite readings.<br>
+    • ${corrections} corrections flagged for threshold recalibration in the Advice Engine (e.g., sowing-trigger rainfall, dry-spell tolerance) before next season.<br>
+    • Agronomist-approved cards become the WhatsApp/IVR broadcast for the village cluster.<br>
+    • In the pilot, district agriculture officers would see this console monthly with trend-vs-feedback reconciliation.<br><br>
+    <b>Season back-test:</b> ${bt ? bt.summary : ""}
+    ${bt ? `<br>Flagged seasons needing confirmation: <b>${bt.flagged_years.join(", ")}</b>.` : ""}`;
+}
+
+function renderRisk(cal) {
+  const strip = cal.map((m) => `
+    <div class="risk-month">
+      <h4>${m.month}</h4>
+      <div class="row"><span class="risk-swatch s-dry"></span><div class="bar-track"><div class="bar-fill f-dry" style="width:${Math.round(m.p_dryspell8 * 100)}%"></div></div><b>${Math.round(m.p_dryspell8 * 100)}%</b></div>
+      <div class="row"><span class="risk-swatch s-heavy"></span><div class="bar-track"><div class="bar-fill f-heavy" style="width:${Math.round(m.p_heavy * 100)}%"></div></div><b>${Math.round(m.p_heavy * 100)}%</b></div>
+      <div class="row"><span class="risk-swatch s-heat"></span><div class="bar-track"><div class="bar-fill f-heat" style="width:${Math.min(100, Math.round(((m.mean_tmax || 0) - 20) * 6))}%"></div></div><b>${m.mean_tmax ?? "—"}°C</b></div>
+    </div>`).join("");
+  $("#risk-strip").innerHTML = strip;
+}
+
+async function boot() {
+  let meta, advice, fbs, bt, riskCal;
+  if (window.__AGRO_BOOT__) {
+    // Injected by the backend -> paints instantly, no fetch race.
+    const b = window.__AGRO_BOOT__;
+    meta = b.meta; advice = b.advice; fbs = b.feedback;
+    bt = b.backtest; riskCal = b.risk;
+  } else {
+    [meta, advice, fbs, bt, riskCal] = await Promise.all([
+      api("/api/meta"), api("/api/advice"), api("/api/feedback"),
+      api("/api/backtest"), api("/api/risk-calendar"),
+    ]);
+  }
+  renderStats(fbs);
+  renderAdvice(advice);
+  renderFeedback(fbs);
+  renderCalibration(fbs, bt);
+  renderRisk(riskCal.calendar);
+}
+boot();
+</script>
+</body>
+</html>

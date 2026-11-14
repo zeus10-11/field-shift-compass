@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "advice_type": "sowing_date",
+    "decision": "follow",
+    "farmer_note": "Waited 8 days more this year - rain came on time. Will do again next season.",
+    "source": "farmer",
+    "created_at": "2026-06-12T09:30:00"
+  },
+  {
+    "id": 2,
+    "advice_type": "stagger",
+    "decision": "question",
+    "farmer_note": "Voice note: my low field flooded in 2023. Should I stagger only the upland?",
+    "source": "farmer",
+    "created_at": "2026-06-14T17:10:00"
+  },
+  {
+    "id": 3,
+    "advice_type": "sowing_date",
+    "decision": "approved",
+    "farmer_note": "Matches district crop-calendar trial results. Approving for WhatsApp broadcast.",
+    "source": "agronomist",
+    "created_at": "2026-06-13T18:05:00"
+  }
+]
