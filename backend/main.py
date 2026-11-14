@@ -7,7 +7,11 @@ or:                     python backend/main.py
 
 import json
 import os
+import sys
 from datetime import datetime
+
+# Make backend/ importable no matter where Vercel/uicron loads this from
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
